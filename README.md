@@ -1,5 +1,6 @@
 # Starting code for [course project](https://docs.google.com/document/d/12SDMbO3MgdawRx1C6XhHFtmAwzCXgpGQTElbGx4Qm78/edit?usp=sharing) of Advanced Machine Learning (AML) 2023
-
+## Note
+The full work file could not be uploaded here, the saved features for example exceed the size limit, it is available [HERE](https://drive.google.com/drive/folders/1-3Zc7_nPymM4jhGcy-TKhyDpNR4W1xVK?usp=sharing)
 ## Getting started
 
 You can play around with the code on your local machine, and use Google Colab for training on GPUs. 
