@@ -75,27 +75,20 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        tot_frames = record.num_frames[modality]
-        num_centroids = self.num_clips
-        frames_per_clip = self.num_frames_per_clip[modality]
-
-        intervals = []
-
-        # for each clip, uniformly select frames
-        for i in range(num_centroids):
-            start = i * tot_frames // num_centroids  # uses floor division
-            end = (i + 1) * tot_frames // num_centroids if i != num_centroids - 1 else tot_frames  # uses floor division
-
-            # Uniformly select frames within the clip
-            indices = np.linspace(start, end, num=frames_per_clip, endpoint=False, dtype=int)
-            intervals.extend(indices)
-
-        # check if the number of selected frames is as expected
-        if len(intervals) != num_centroids * frames_per_clip:
-            raise ValueError(
-                f"Invalid number of frames: got {len(intervals)}, expected {num_centroids * frames_per_clip}")
-
-        return intervals
+        clip_size = np.round(record.num_frames[modality] / self.num_clips) # sample length / number of desired clips
+        
+        frames = []
+        centroids = np.linspace(clip_size/2, record.num_frames[modality] - clip_size/2, self.num_clips).round().tolist()
+        for cen in centroids:
+                # dense sampling
+                first = cen - np.around(self.num_frames_per_clip[modality]/2) * self.stride
+                
+                aux = np.array([first+j*self.stride for j in range(self.num_frames_per_clip[modality])])
+                aux[aux > record.num_frames[modality]] = record.num_frames[modality]
+                aux[aux < 0] = 0
+                
+                frames.append(aux)
+        return np.array(frames).flatten()
         raise NotImplementedError("You should implement _get_train_indices")
 
     def _get_val_indices(self, record, modality):
@@ -107,26 +100,20 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        tot_frames = record.num_frames[modality]
-        num_centroids = self.num_clips
-        frames_per_clip = self.num_frames_per_clip[modality]
-
-        intervals = []
-
-        # for each clip, uniformly select frames
-        for i in range(num_centroids):
-            start = i * tot_frames // num_centroids     # uses floor division
-            end = (i + 1) * tot_frames // num_centroids if i != num_centroids - 1 else tot_frames       # uses floor division
-
-            # Uniformly select frames within the clip
-            indices = np.linspace(start, end, num=frames_per_clip, endpoint=False, dtype=int)
-            intervals.extend(indices)
-
-        # check if the number of selected frames is as expected
-        if len(intervals) != num_centroids * frames_per_clip:
-            raise ValueError(f"Invalid number of frames, got {len(intervals)}, expected {num_centroids * frames_per_clip}")
-
-        return intervals
+        clip_size = np.round(record.num_frames[modality] / self.num_clips) # sample length / number of desired clips
+        
+        frames = []
+        centroids = np.linspace(clip_size/2, record.num_frames[modality] - clip_size/2, self.num_clips).round().tolist()
+        for cen in centroids:
+                # dense sampling
+                first = cen - np.around(self.num_frames_per_clip[modality]/2) * self.stride
+                
+                aux = np.array([first+j*self.stride for j in range(self.num_frames_per_clip[modality])])
+                aux[aux > record.num_frames[modality]] = record.num_frames[modality]
+                aux[aux < 0] = 0
+                
+                frames.append(aux)
+        return np.array(frames).flatten()
         raise NotImplementedError("You should implement _get_val_indices")
 
     def __getitem__(self, index):
