@@ -1,29 +1,73 @@
-# Starting code for [course project](https://docs.google.com/document/d/12SDMbO3MgdawRx1C6XhHFtmAwzCXgpGQTElbGx4Qm78/edit?usp=sharing) of Advanced Machine Learning (AML) 2023
-## Note
-The full work files could not be uploaded here, the saved features for example exceed the size limit, it is available [HERE](https://drive.google.com/drive/folders/1-3Zc7_nPymM4jhGcy-TKhyDpNR4W1xVK?usp=sharing)
-## Getting started
+# Multimodal Egocentric Action Recognition
 
-You can play around with the code on your local machine, and use Google Colab for training on GPUs. 
-In all the cases it is necessary to have the reduced version of the dataset where you are running the code. For simplicity, we inserted just the necessary frames at [this link](https://drive.google.com/drive/u/1/folders/1dJOtZ07WovP3YSCRAnU0E4gsfqDzpMVo).
+## Overview
+This project investigates feature extraction and action recognition in egocentric vision utilizing pre-trained models. Various dimensionality reduction techniques, including PCA and tSNE, are applied to understand their effect on training. A simple classifier is then created and trained with the extracted features for evaluation.
 
-Before starting to implement your own code, make sure to:
-1. read and study the material provided
-2. understand how all the scripts are working and interacting
-3. get familiar with the structure of the [EPIC-KITCHENS dataset](https://epic-kitchens.github.io/2022), what a sample, a clip and a frame are
-4. play around with the code in the template to familiarize with all the tools.
+## Repository Structure
+```md
+ProjectDAAI_2023_24/
+│── data/               # Dataset and pre-processed features
+│── models/             # Pre-trained models and trained classifiers
+│── notebooks/          # Jupyter notebooks for experiments and analysis
+│── scripts/            # Python scripts for feature extraction and training
+│── results/            # Output results, plots, and evaluation metrics
+│── README.md           # Project documentation (this file)
+│── requirements.txt    # List of dependencies
+```
 
-### 1. Local
+## Dataset
+The project uses the **EPIC-Kitchens-55** dataset, a large-scale egocentric video benchmark recorded by 32 participants in their native kitchen environments. The study focuses on **participant P08**, using only RGB frames.
 
-You can work on your local machine directly, the code which needs to be run does not require heavy computations. 
-In order to do so a file with all the requirements for the python environment is provided [here](requirements.yaml), it contains even more packages than the strictly needed ones so if you want to install everything step-by-step just be careful to use pytorch 1.12 and torchvision 0.13. 
+## Methodology
+1. **Video Sampling Strategies:**
+   - **Dense Sampling:** Selecting frames close to each other to preserve temporal dynamics.
+   - **Uniform Sampling:** Spreading frame selection evenly throughout the video.
 
-### 2. Google Colab
+2. **Feature Extraction:**
+   - Using a pre-trained **I3D-Inception-v1** model to extract spatial and temporal features.
 
-You can also run the code on [Google Colab](https://colab.research.google.com/).
+3. **Dimensionality Reduction:**
+   - **PCA (Principal Component Analysis):** Focuses on global variance.
+   - **tSNE (t-Distributed Stochastic Neighbor Embedding):** Emphasizes local variance.
 
-- Upload all the scripts in this repo.
-- Prepare a proper notebook structured as the `train_classifier.py` script.
+4. **Classifier Training:**
+   - A fully connected layer with:
+     - Input Layer: 1024 neurons
+     - Hidden Layer: 512 neurons
+     - Output Layer: 8 neurons (corresponding to action classes)
+     - ReLU activation and dropout layers for regularization
 
-As a reference, `colab_runner.ipynb` provides an example of how to set up a working environment in Google Colab.
+## Results
+- **Dense Sampling** achieved **92.12% accuracy**, outperforming uniform sampling.
+- **Classifier Accuracy:**
+  - Best accuracy achieved: **56.09%**
+  - Average accuracy: **48.75%**
 
-NOTE: you need to stay connected to the Google Colab interface at all times for your python scripts to keep training.
+## Requirements
+Install dependencies using:
+```bash
+pip install -r requirements.txt
+```
+
+## How to Run
+1. **Preprocess Data:** Extract frames and prepare features.
+2. **Feature Extraction:** Run `scripts/extract_features.py`.
+3. **Train Classifier:** Run `scripts/train_classifier.py`.
+4. **Evaluate Model:** Analyze results in `notebooks/evaluation.ipynb`.
+
+## Future Work
+- Experiment with different **sampling stride values**.
+- Improve classifier with **additional hidden layers**.
+- Explore different **dropout rates** to prevent overfitting.
+
+## Contributors
+- Jukel Rakesh (s308039)
+- Aswin Prasannakumar (s314443)
+- Juan Perez de la Calle (s321372)
+
+## References
+Refer to `DAAI_Report.pdf` for detailed explanations and citations.
+
+---
+For any questions or contributions, feel free to open an issue or submit a pull request!
+
